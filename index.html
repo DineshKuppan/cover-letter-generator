@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 70vh;
+        }
+
+        .input-section {
+            padding: 40px;
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .output-section {
+            padding: 40px;
+            background: white;
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control.large {
+            min-height: 120px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .cover-letter {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .cover-letter-content {
+            white-space: pre-line;
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        .placeholder-text {
+            color: #6c757d;
+            font-style: italic;
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 1.1rem;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .cover-letter:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+        }
+
+        .tips {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .tips h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .tips ul {
+            font-size: 0.85rem;
+            color: #424242;
+            padding-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cover Letter Generator</h1>
+            <p>Create professional, minimalist cover letters tailored to any job</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <form id="coverLetterForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" class="form-control" placeholder="Your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" id="companyName" class="form-control" placeholder="Target company name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" class="form-control" placeholder="Position you're applying for" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description</label>
+                        <textarea id="jobDescription" class="form-control large" placeholder="Paste the job description here..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileInfo">Your Professional Profile</label>
+                        <textarea id="profileInfo" class="form-control large" placeholder="Describe your experience, skills, achievements, and what makes you a great fit..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn">Generate Cover Letter</button>
+                </form>
+
+                <div class="tips">
+                    <h4>💡 Tips for best results:</h4>
+                    <ul>
+                        <li>Include specific achievements with numbers/metrics</li>
+                        <li>Mention relevant technologies, tools, or methodologies</li>
+                        <li>Highlight experiences that match the job requirements</li>
+                        <li>Keep your profile concise but comprehensive</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="cover-letter">
+                    <button class="copy-btn" id="copyBtn">Copy to Clipboard</button>
+                    <div id="coverLetterOutput">
+                        <div class="placeholder-text">
+                            Fill out the form and click "Generate Cover Letter" to create your personalized cover letter.
+                        </div>
+                    </div>
+                </div>
+                <div class="success-message" id="successMessage">
+                    Cover letter copied to clipboard!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class CoverLetterGenerator {
+            constructor() {
+                this.form = document.getElementById('coverLetterForm');
+                this.output = document.getElementById('coverLetterOutput');
+                this.copyBtn = document.getElementById('copyBtn');
+                this.successMessage = document.getElementById('successMessage');
+                
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                this.copyBtn.addEventListener('click', () => this.copyToClipboard());
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    companyName: document.getElementById('companyName').value.trim(),
+                    jobTitle: document.getElementById('jobTitle').value.trim(),
+                    jobDescription: document.getElementById('jobDescription').value.trim(),
+                    profileInfo: document.getElementById('profileInfo').value.trim()
+                };
+
+                // Validate required fields
+                if (!formData.fullName || !formData.email || !formData.companyName || 
+                    !formData.jobTitle || !formData.jobDescription || !formData.profileInfo) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                this.showLoading();
+                
+                // Simulate processing time
+                setTimeout(() => {
+                    const coverLetter = this.generateCoverLetter(formData);
+                    this.displayCoverLetter(coverLetter);
+                }, 1500);
+            }
+
+            showLoading() {
+                this.output.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Generating your personalized cover letter...</p>
+                    </div>
+                `;
+            }
+
+            generateCoverLetter(data) {
+                const today = new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+
+                // Extract key skills and requirements from job description
+                const keyWords = this.extractKeywords(data.jobDescription);
+                const matchingSkills = this.findMatchingSkills(data.profileInfo, keyWords);
+
+                const coverLetter = `${data.fullName}
+${data.email}${data.phone ? `\n${data.phone}` : ''}
+
+${today}
+
+Dear Hiring Manager,
+
+I am writing to express my strong interest in the ${data.jobTitle} position at ${data.companyName}. After reviewing the job description, I am confident that my background and skills align perfectly with your requirements.
+
+${this.generateMiddleParagraphs(data, matchingSkills)}
+
+I am excited about the opportunity to contribute to ${data.companyName}'s continued success and would welcome the chance to discuss how my experience can benefit your team. Thank you for considering my application.
+
+Sincerely,
+${data.fullName}`;
+
+                return coverLetter;
+            }
+
+            extractKeywords(jobDescription) {
+                const commonSkills = [
+                    'javascript', 'python', 'java', 'react', 'angular', 'vue', 'node.js', 'express',
+                    'sql', 'mongodb', 'postgresql', 'aws', 'azure', 'docker', 'kubernetes',
+                    'git', 'agile', 'scrum', 'leadership', 'management', 'communication',
+                    'problem-solving', 'analytical', 'teamwork', 'collaboration'
+                ];
+                
+                const text = jobDescription.toLowerCase();
+                return commonSkills.filter(skill => text.includes(skill.toLowerCase()));
+            }
+
+            findMatchingSkills(profileInfo, keywords) {
+                const profile = profileInfo.toLowerCase();
+                return keywords.filter(keyword => profile.includes(keyword.toLowerCase()));
+            }
+
+            generateMiddleParagraphs(data, matchingSkills) {
+                let middle = `In my professional journey, ${data.profileInfo.split('.')[0].toLowerCase()}.`;
+                
+                if (matchingSkills.length > 0) {
+                    middle += ` I bring particular strength in ${matchingSkills.slice(0, 3).join(', ')}, which I understand are key requirements for this role.`;
+                }
+
+                // Add a sentence about company fit
+                middle += ` What particularly draws me to ${data.companyName} is the opportunity to contribute to meaningful work while continuing to grow professionally in a dynamic environment.`;
+
+                return middle;
+            }
+
+            displayCoverLetter(coverLetter) {
+                this.output.innerHTML = `<div class="cover-letter-content">${coverLetter}</div>`;
+            }
+
+            async copyToClipboard() {
+                const content = this.output.querySelector('.cover-letter-content');
+                if (!content) return;
+
+                try {
+                    await navigator.clipboard.writeText(content.textContent);
+                    this.showSuccessMessage();
+                } catch (err) {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = content.textContent;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    this.showSuccessMessage();
+                }
+            }
+
+            showSuccessMessage() {
+                this.successMessage.classList.add('show');
+                setTimeout(() => {
+                    this.successMessage.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new CoverLetterGenerator();
+        });
+    </script>
+</body>
+</html>
